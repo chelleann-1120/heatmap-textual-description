@@ -25,11 +25,13 @@ class DataPreprocessing:
   
   @property
   def preprocess_data(self):
-    all_img_data, all_annotation_data = self.process_all_data
-    print(all_annotation_data)
+    all_img_data, all_annotation_data = self.collect_data
+    tokenized_img_data = self.tokenize_input(all_img_data)
+    tokenized_annotation = self.tokenize_target(all_annotation_data)
+    print(tokenized_img_data)
 
   @property
-  def process_image(self):
+  def collect_data(self):
     img_data = []
     annotation_data = []
     df = self.read_csv(self.csv_dir)
@@ -41,7 +43,7 @@ class DataPreprocessing:
       values = TextExtraction(image_path, image_name)
       clean_values = TextFormatter(values)
       matrix_values = GridProcessor(clean_values, image_path, image_name).create_grid_matrix()
-      img_data.extend(matrix_values)
+      img_data.append(matrix_values)
       
       annotation = self.formatted_captions(row.iloc[1])
       annotation_data.append(annotation)
@@ -84,15 +86,20 @@ class DataPreprocessing:
   
 
 class Vocabulary:
-
-  def __init__(self, captions_list, freq_threshold=2):
+  '''
+  Converts the tokenized texts into equivalent sequence in dictionary
+  '''
+  def __init__(self, data, freq_threshold=2):
+    spacy.prefer_gpu()
     self.word_index = {"<PAD>": 0, "<SOS>": 1, "<EOS>": 2, "<UNK>": 3}
     self.index_word = {0: "<PAD>", 1: "<SOS>", 2: "<EOS>", 3: "<UNK>"}
     self.word_counts = {}
     self.freq_threshold = freq_threshold
-    spacy.prefer_gpu()
+    self.annotation_sequence = []
+    self.img_text_sequence = []
     self.spacy_eng = spacy.load("en_core_web_sm")
-    self.build_vocab(captions_list)
+    self.build_vocab(data.prepare_annotation)
+    self.convert_to_sequence(data.collect_data)
 
   def build_vocab(self, captions_list):
     frequency = Counter()
@@ -112,19 +119,22 @@ class Vocabulary:
     print(self.word_index)
     print(self.index_word)
   
-  # Is used in a loop, input is a list
-  def captions_to_sequence(self, sentence):
+  # Is used in a loop, input is a single list
+  def annotation_to_sequence(self, sentence):
     if isinstance(sentence, list):
       sentence = " ".join(sentence)
 
-    sentence = self.spacy_eng.tokenizer(sentence.lower())
     return [
         self.word_index[token.text]
         if token.text in self.word_index else self.word_index["<UNK>"]
         for token in sentence
     ]
 
-  # Is used in a loop, input is a list
+  # Is used in a loop, input is a single list
   def sequence_to_captions(self, sequence):
       return " ".join([self.index_word[index] for index in sequence])
   
+  def convert_to_sequence(self, collected_data):
+    annotation_list, img_text_list = collected_data
+    self.img_text_sequence = img_text_list
+    print(annotation_list)

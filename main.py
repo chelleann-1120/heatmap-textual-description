@@ -6,17 +6,18 @@ class HeatmapEncoder:
 
   def __init__(self, input_dir):
     self.train_csv_path = ".\\data\\ground_truth\\train\\annotation.csv"
-    self.train_img_dir = "\\data\\images\\train"
+    self.train_img_dir = ".\\data\\images\\train"
     self.max_len = 0
 
 
   def run_main(self):
     
-    data = DataPreprocessing(self.train_csv_path, self.train_img_dir).prepare_annotation
+    data = DataPreprocessing(self.train_csv_path, self.train_img_dir)
     vocab = Vocabulary(data, freq_threshold=4)
-
+    print(vocab.img_text_sequence)
+    
     # Data Preprocessing
-    # vocab = Vocabulary(data, freq_threshold=2)
+    # 
 
     # Training
 
