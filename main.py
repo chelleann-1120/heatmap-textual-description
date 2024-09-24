@@ -11,10 +11,11 @@ class HeatmapEncoder:
 
 
   def run_main(self):
+    x = 1
+    print(x)
     
-    data = DataPreprocessing(self.train_csv_path, self.train_img_dir)
-    vocab = Vocabulary(data, freq_threshold=4)
-    print(vocab.img_text_sequence)
+    # data = DataPreprocessing(self.train_csv_path, self.train_img_dir)
+    # vocab = Vocabulary(data, freq_threshold=4)
     
     # Data Preprocessing
     # 
