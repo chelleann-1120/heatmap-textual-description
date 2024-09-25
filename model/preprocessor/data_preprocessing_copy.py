@@ -2,7 +2,9 @@ from model.encoder.text_extraction import TextExtraction
 from model.encoder.format_text import TextFormatter
 from model.encoder.grid_processor import GridProcessor
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import tensorflow as tf
 import pandas as pd
+import numpy as np
 import spacy
 import re
 from collections import Counter
@@ -25,10 +27,10 @@ class DataPreprocessing:
     df = pd.read_csv(file_path)
     return df
   
-  # @property
-  # def preprocess_data(self):
-  #   all_img_data, all_annotation_data = self.collect_data
-  #   return all_img_data, all_annotation_data
+  @property
+  def preprocess_data(self):
+    all_img_data, all_annotation_data = self.collect_data
+    return all_img_data, all_annotation_data
 
   @property
   def collect_data(self): # Returns tokenized img data, and annotation data
@@ -40,32 +42,18 @@ class DataPreprocessing:
       image_name = row.iloc[0]
       image_path = os.path.join(self.img_dir, image_name)
 
-      print(image_name)
       values = TextExtraction(image_path, image_name)
-      # print(values.extract_title())
-      # print(values.extract_legend_values())
-      # print(values.extract_xaxis_labels())
-      # print(values.extract_yaxis_labels())
-
-
       clean_values = TextFormatter(values)
-      # print(clean_values.clean_legend_values())
-      # print(clean_values.clean_xaxis_label())
-      # print(clean_values.clean_yaxis_label())
-      # print(clean_values.format_title())
       
-
       matrix_values = GridProcessor(clean_values, image_path, image_name).create_grid_matrix()
-      print(matrix_values)
-
-      # img_data.append(self.tokenize_input(matrix_values))
+      img_data.append(self.tokenize_input(matrix_values))
       
-      # annotation = self.formatted_captions(row.iloc[1])
-      # tokens = self.spacy_eng.tokenizer(annotation)
-      # tokenized_annotation = [token.text for token in tokens]
-      # annotation_data.append(tokenized_annotation)
+      annotation = self.formatted_captions(row.iloc[1])
+      tokens = self.spacy_eng.tokenizer(annotation)
+      tokenized_annotation = [token.text for token in tokens]
+      annotation_data.append(tokenized_annotation)
 
-    # return img_data, annotation_data
+    return img_data, annotation_data
 
   def words_to_sequence(self, sentence):
 
@@ -125,8 +113,11 @@ class Vocabulary:
     self.annotation_sequence = []
     self.img_text_sequence = []
     self.spacy_eng = spacy.load("en_core_web_sm")
-    self.build_vocab(data.prepare_annotation)
-    # self.convert_to_sequence(data.preprocess_data)
+    self.data = data
+    self.build_vocab(self.data.prepare_annotation)
+    self.convert_to_sequence(self.data.preprocess_data)
+    self.pad_data()
+    
 
   def build_vocab(self, captions_list):
     frequency = Counter()
@@ -144,13 +135,26 @@ class Vocabulary:
   # Is used in a loop, input is a single list
   def annotation_to_sequence(self, sentence):
     if isinstance(sentence, list):
-      sentence = " ".join(sentence)
+        sentence = " ".join(sentence)
 
-    return [
-        self.word_index[token.text]
-        if token.text in self.word_index else self.word_index["<UNK>"]
-        for token in sentence
+    # Convert sentence to a list of tokens
+    tokens = sentence.split()
+
+    # Convert tokens to indices
+    sequence = [
+        self.word_index[token]
+        if token in self.word_index else self.word_index["<UNK>"]
+        for token in tokens
     ]
+
+    # Append <SOS> at the start and <EOS> at the end
+    sequence.insert(0, self.word_index["<SOS>"])
+    sequence.append(self.word_index["<EOS>"])
+
+    return sequence
+  
+  def img_text_to_seq(self, list):
+    return [self.annotation_to_sequence(sublist) for sublist in list]
 
   # Is used in a loop, input is a single list
   def sequence_to_captions(self, sequence):
@@ -158,4 +162,39 @@ class Vocabulary:
   
   def convert_to_sequence(self, collected_data):
     img_text_list, annotation_list = collected_data
-    self.img_text_sequence = img_text_list
+    all_img_text_seq = []
+    all_annotation_seq = []
+
+    for img_text in img_text_list:
+      img_txt_seq = self.img_text_to_seq(img_text)
+      img_data = tf.keras.preprocessing.sequence.pad_sequences(
+                  img_txt_seq, maxlen=8, padding="post"
+                  )
+      all_img_text_seq.append(img_data)
+
+    for annotation in annotation_list:
+      annotation_sequence = self.annotation_to_sequence(annotation)
+      all_annotation_seq.append(annotation_sequence)
+      # print(annotation_sequence)
+    
+    return all_img_text_seq, all_annotation_seq
+  
+  def pad_data(self):
+
+    img_data, annotation_data = self.convert_to_sequence(self.data.preprocess_data)
+    
+    annotation_data = tf.keras.preprocessing.sequence.pad_sequences(
+        annotation_data, padding="post", dtype='float32')
+
+    img_data = tf.keras.preprocessing.sequence.pad_sequences(
+                  img_data, maxlen=565, padding="post"
+                  )
+
+    print(img_data)
+
+    return np.array(annotation_data)
+    
+
+  
+
+    
