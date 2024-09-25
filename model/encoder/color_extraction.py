@@ -19,6 +19,8 @@ class ColorExtractor(RegionDetection):
 
     x, y, width, height = cv2.boundingRect(self.color_legend)
     legend_roi = image_array[y:y+height, x:x+width]
+
+    # iterates over the pixels of the given image
     flattened_colors = [color for row in legend_roi for color in row if not np.array_equal(color, [0, 0, 0])]
 
     unique_colors = []

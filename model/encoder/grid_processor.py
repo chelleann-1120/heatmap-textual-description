@@ -15,12 +15,13 @@ class GridProcessor(ColorMapping):
     self.mapped_grid = self.map_cell_values()
 
   def create_grid_matrix(self):
+
     cell_matrix = []
     for j in range(self.yaxis_len):
       for i in range(self.xaxis_len):
         index = j * self.xaxis_len + i  # Calculate the index for 1D list
         mapped_value = self.mapped_grid[index]  # Access the 1D list element
-        cell_matrix.append([self.yaxis_labels[j], self.xaxis_labels[i], mapped_value, self.title])
+        cell_matrix.append([self.yaxis_labels[j], self.xaxis_labels[i], mapped_value])
     return cell_matrix
 
   def flatten_list(self, nested_list):

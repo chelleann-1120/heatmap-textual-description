@@ -11,18 +11,20 @@ class HeatmapEncoder:
 
 
   def run_main(self):
+
+    data = DataPreprocessing(self.train_csv_path, self.train_img_dir).collect_data
+    # data = DataPreprocessing(self.train_csv_path, self.train_img_dir)
     
-    data = DataPreprocessing(self.train_csv_path, self.train_img_dir)
-    vocab = Vocabulary(data, freq_threshold=4)
-    
-    # Data Preprocessing
-    # 
+    # vocab = Vocabulary(data, freq_threshold=4)
+    # print(vocab.word_index)
 
     # Training
 
-    # Save every epoch or after the training?
+    # Save model
 
     # Testing
+
+    # Validation
 
 if __name__ == "__main__":
   input_dir = ".\\data\\images\\train"

@@ -9,7 +9,7 @@ from collections import Counter
 import os
 import re
 
-# I'll think of a better name
+
 class DataPreprocessing:
   '''
   Converts the annotation and extracted texts from images into tokens or sequence
@@ -25,11 +25,10 @@ class DataPreprocessing:
     df = pd.read_csv(file_path)
     return df
   
-  @property
-  def preprocess_data(self):
-    all_img_data, all_annotation_data = self.collect_data
-    print(all_annotation_data)
-    return all_img_data, all_annotation_data
+  # @property
+  # def preprocess_data(self):
+  #   all_img_data, all_annotation_data = self.collect_data
+  #   return all_img_data, all_annotation_data
 
   @property
   def collect_data(self): # Returns tokenized img data, and annotation data
@@ -37,22 +36,36 @@ class DataPreprocessing:
     annotation_data = []
     df = self.read_csv(self.csv_dir)
 
-    for _, row in df.iloc[0:2].iterrows():
+    for _, row in df.iloc[:2].iterrows():
       image_name = row.iloc[0]
       image_path = os.path.join(self.img_dir, image_name)
 
+      print(image_name)
       values = TextExtraction(image_path, image_name)
+      # print(values.extract_title())
+      # print(values.extract_legend_values())
+      # print(values.extract_xaxis_labels())
+      # print(values.extract_yaxis_labels())
+
+
       clean_values = TextFormatter(values)
+      # print(clean_values.clean_legend_values())
+      # print(clean_values.clean_xaxis_label())
+      # print(clean_values.clean_yaxis_label())
+      # print(clean_values.format_title())
+      
+
       matrix_values = GridProcessor(clean_values, image_path, image_name).create_grid_matrix()
+      # print(matrix_values)
+
       img_data.append(self.tokenize_input(matrix_values))
       
-      annotation = self.formatted_captions(row.iloc[1])
-      tokens = self.spacy_eng.tokenizer(annotation)
-      tokenized_annotation = [token.text for token in tokens]
-      annotation_data.append(tokenized_annotation)
+      # annotation = self.formatted_captions(row.iloc[1])
+      # tokens = self.spacy_eng.tokenizer(annotation)
+      # tokenized_annotation = [token.text for token in tokens]
+      # annotation_data.append(tokenized_annotation)
 
-      print(annotation_data)
-    return img_data, annotation_data
+    # return img_data, annotation_data
 
   def words_to_sequence(self, sentence):
 
@@ -113,7 +126,7 @@ class Vocabulary:
     self.img_text_sequence = []
     self.spacy_eng = spacy.load("en_core_web_sm")
     self.build_vocab(data.prepare_annotation)
-    self.convert_to_sequence(data.preprocess_data)
+    # self.convert_to_sequence(data.preprocess_data)
 
   def build_vocab(self, captions_list):
     frequency = Counter()
