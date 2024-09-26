@@ -1,5 +1,5 @@
 import os, sys
-from model.encoder.feature_transformation.data_preprocessing import DataPreprocessing, Vocabulary
+from model.encoder.feature_transformation.data_transformation import DataPreprocessing, Vocabulary
 
 
 class HeatmapEncoder:
