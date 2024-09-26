@@ -1,6 +1,6 @@
-from model.encoder.text_extraction import TextExtraction
-from model.encoder.format_text import TextFormatter
-from model.encoder.grid_processor import GridProcessor
+from model.encoder.feature_extraction.text_extraction import TextExtraction
+from model.encoder.feature_extraction.format_text import TextFormatter
+from model.encoder.feature_extraction.grid_processor import GridProcessor
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 import spacy
@@ -36,7 +36,7 @@ class DataPreprocessing:
     annotation_data = []
     df = self.read_csv(self.csv_dir)
 
-    for _, row in df.iloc[:2].iterrows():
+    for _, row in df.iloc[0:3].iterrows():
       image_name = row.iloc[0]
       image_path = os.path.join(self.img_dir, image_name)
 
@@ -56,7 +56,7 @@ class DataPreprocessing:
       
 
       matrix_values = GridProcessor(clean_values, image_path, image_name).create_grid_matrix()
-      print(matrix_values)
+      # print(matrix_values)
 
       # img_data.append(self.tokenize_input(matrix_values))
       

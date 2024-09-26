@@ -5,7 +5,7 @@ from model.preprocessor.data_preprocessing_copy import DataPreprocessing, Vocabu
 class HeatmapEncoderDecoder:
 
   def __init__(self, input_dir):
-    self.train_csv_path = ".\\data\\ground_truth\\train\\annotation.csv"
+    self.train_csv_path = ".\\data\\ground_truth\\train\\annotations.csv"
     self.train_img_dir = ".\\data\\images\\train"
     self.max_len = 0
 

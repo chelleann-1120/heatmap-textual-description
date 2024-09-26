@@ -1,6 +1,6 @@
 import cv2
 from PIL import Image
-from model.encoder.region_detection import RegionDetection
+from model.encoder.feature_extraction.region_detection import RegionDetection
 import pytesseract
 
 

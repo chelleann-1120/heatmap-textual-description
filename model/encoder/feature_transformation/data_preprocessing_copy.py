@@ -130,6 +130,8 @@ class Vocabulary:
         self.word_index[token.text] = index
         self.index_word[index] = f"{token.text}"
         index += 1
+
+    print(self.index_word)
   
   
   # Is used in a loop, input is a single list
@@ -184,13 +186,13 @@ class Vocabulary:
     img_data, annotation_data = self.convert_to_sequence(self.data.preprocess_data)
     
     annotation_data = tf.keras.preprocessing.sequence.pad_sequences(
-        annotation_data, padding="post", dtype='float32')
+        annotation_data, padding="post")
 
     img_data = tf.keras.preprocessing.sequence.pad_sequences(
                   img_data, maxlen=565, padding="post"
                   )
 
-    print(img_data)
+    print(annotation_data)
 
     return np.array(annotation_data)
     

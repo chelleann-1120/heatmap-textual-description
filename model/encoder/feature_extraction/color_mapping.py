@@ -1,5 +1,5 @@
 import numpy as np
-from model.encoder.color_extraction import ColorExtractor
+from model.encoder.feature_extraction.color_extraction import ColorExtractor
 
 class ColorMapping(ColorExtractor):
 

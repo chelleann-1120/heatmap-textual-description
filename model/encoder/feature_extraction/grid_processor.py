@@ -1,4 +1,4 @@
-from model.encoder.color_mapping import ColorMapping
+from model.encoder.feature_extraction.color_mapping import ColorMapping
 
 class GridProcessor(ColorMapping):
   
