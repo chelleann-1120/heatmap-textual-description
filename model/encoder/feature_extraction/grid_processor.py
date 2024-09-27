@@ -4,7 +4,7 @@ class GridProcessor(ColorMapping):
   
   def __init__(self, text, image_path, image_name):
     super().__init__(text, image_path, image_name)
-    self.title = text.format_title()
+    self.title = text.clean_title()
     self.yaxis_labels = text.clean_yaxis_label()
     self.xaxis_labels = text.clean_xaxis_label()
     self.legend_values = text.clean_legend_values()

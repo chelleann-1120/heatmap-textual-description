@@ -1,8 +1,8 @@
 import os, sys
-from model.encoder.feature_transformation.data_transformation import DataPreprocessing, Vocabulary
+from model.encoder.feature_transformation.data_transformation import DataTransformation, Vocabulary
 
 
-class HeatmapEncoder:
+class HeatmapEncoderDecoder:
 
   def __init__(self, input_dir):
     self.train_csv_path = ".\\data\\ground_truth\\train\\annotations.csv"
@@ -12,11 +12,8 @@ class HeatmapEncoder:
 
   def run_main(self):
 
-    data = DataPreprocessing(self.train_csv_path, self.train_img_dir).collect_data
-    # data = DataPreprocessing(self.train_csv_path, self.train_img_dir)
-    
-    # vocab = Vocabulary(data, freq_threshold=2)
-    # print(vocab.word_index)
+    data = DataTransformation(self.train_csv_path, self.train_img_dir)
+    vocab = Vocabulary(data, freq_threshold=4)
 
     # Training
 
@@ -28,4 +25,4 @@ class HeatmapEncoder:
 
 if __name__ == "__main__":
   input_dir = ".\\data\\images\\train"
-  HeatmapEncoder(input_dir).run_main()
+  HeatmapEncoderDecoder(input_dir).run_main()

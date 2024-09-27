@@ -5,7 +5,7 @@ class TextFormatter:
   def __init__(self, text):
     self.text = text
 
-  def format_title(self):
+  def clean_title(self):
     title = self.text.extract_title()
     title = title.replace('\n', ' ')
     return title
