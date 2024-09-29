@@ -76,7 +76,7 @@ class ColorExtractor(RegionDetection):
         # Define criteria and apply K-means clustering
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
         k = 1
-        _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+        _, _, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
         # Get the dominant color
         dominant_color = centers[0].astype(int).tolist()

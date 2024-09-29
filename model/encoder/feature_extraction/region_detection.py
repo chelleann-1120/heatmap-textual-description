@@ -43,7 +43,7 @@ class RegionDetection:
       return second_largest_contour
 
   # Displays the region of interest
-  def draw_bounding_box(self, roi):
+  def crop_detected_roi(self, roi):
 
     # Convert the ROI to grayscale
     gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
@@ -58,8 +58,7 @@ class RegionDetection:
     cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
     
     # Debug: Display the grayscale ROI
-    plt.imshow(gray_roi, cmap='gray')
-    plt.title("Grayscale ROI")
+    plt.imshow(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
     plt.axis('off')
     plt.show()
 

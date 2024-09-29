@@ -13,7 +13,7 @@ class HeatmapEncoderDecoder:
   def run_main(self):
 
     data = DataTransformation(self.train_csv_path, self.train_img_dir)
-    vocab = Vocabulary(data, freq_threshold=4)
+    vocab = Vocabulary(data, freq_threshold=2)
 
     # Training
 
